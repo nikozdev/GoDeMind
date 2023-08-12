@@ -44,6 +44,10 @@ set(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
 ##lib
 
 add_library(${vProjNameTlib} INTERFACE)
+target_compile_definitions(${vProjNameTlib} INTERFACE
+  "${vProjNameDefs}ProjName=${vProjNameBase}"
+  "${vProjNameDefs}ProjVnum=${vProjVnumWhole}"
+  ) # target_compile_definitions
 
 ##dll
 
@@ -83,8 +87,15 @@ endif(oMakeTexe)
 cmake_dependent_option(oMakeTest "Make Testing" ON oMakeTexe OFF)
 if(oMakeTest)
 
+  target_compile_definitions(${vProjNameTexe} PRIVATE ${vProjNameDefs}MakeTest)
+
   include(CTest)
 
   enable_testing()
+
+  set(vTestName "tHelloWorld")
+  add_test(NAME ${vTestName}
+    COMMAND ${vProjNameTexe} ${vTestName}
+    ) # add_test
 
 endif(oMakeTest)
