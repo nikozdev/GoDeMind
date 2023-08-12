@@ -45,9 +45,20 @@ set(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
 
 add_library(${vProjNameTlib} INTERFACE)
 target_compile_definitions(${vProjNameTlib} INTERFACE
-  "${vProjNameDefs}ProjName=${vProjNameBase}"
-  "${vProjNameDefs}ProjVnum=${vProjVnumWhole}"
+  ${vProjNameDefs}ProjName="${vProjNameBase}"
+  ${vProjNameDefs}ProjVnum="${vProjVnumWhole}"
+  ${vProjNameDefs}FilePathBase="${vFilePathBase}"
+  ${vProjNameDefs}FilePathData="${vFilePathData}"
   ) # target_compile_definitions
+
+find_package(fmt 10.0.0 REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE fmt::fmt)
+mark_as_advanced(FORCE fmt_DIR)
+
+mark_as_advanced(FORCE Boost_INCLUDE_DIR)
+find_package(Boost COMPONENTS filesystem REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE Boost::filesystem)
+mark_as_advanced(FORCE Boost_FILESYSTEM_LIBRARY_RELEASE)
 
 ##dll
 
@@ -87,6 +98,8 @@ endif(oMakeTexe)
 cmake_dependent_option(oMakeTest "Make Testing" ON oMakeTexe OFF)
 if(oMakeTest)
 
+  #set(BUILD_TESTING ON FORCE)
+
   target_compile_definitions(${vProjNameTexe} PRIVATE ${vProjNameDefs}MakeTest)
 
   include(CTest)
@@ -97,5 +110,21 @@ if(oMakeTest)
   add_test(NAME ${vTestName}
     COMMAND ${vProjNameTexe} ${vTestName}
     ) # add_test
+  set_tests_properties(${vTestName} PROPERTIES
+    PASS_REGULAR_EXPRESSION "HelloWorld"
+    ) # set_tests_properties
+
+  set(vTestName "tFileSystem")
+  add_test(NAME ${vTestName}
+    COMMAND ${vProjNameTexe} ${vTestName}
+    ) # add_test
+  set_tests_properties(${vTestName} PROPERTIES
+    PASS_REGULAR_EXPRESSION "FilePath==."
+    ) # set_tests_properties
+
+else()
+
+  #set(BUILD_TESTING OFF FORCE)
 
 endif(oMakeTest)
+mark_as_advanced(FORCE BUILD_TESTING)

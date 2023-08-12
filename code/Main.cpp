@@ -1,9 +1,12 @@
 #ifndef dGofDeMin_Main_cpp
 #define dGofDeMin_Main_cpp
 //headers
-//-//standard
+//-//string
+#include <fmt/format.h>
 #include <string_view>
-#include <iostream>
+//-//files:
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 //content
 namespace nGofDeMin
 {
@@ -23,6 +26,7 @@ extern const tTestTab vTestTab;
 //actions
 int main(int vArgC, const char **vArgV, const char **vEnvi)
 {
+	boost::filesystem::current_path(dGofDeMin_FilePathBase);
 #if defined(dGofDeMin_MakeTest)
 	if(vArgC > 1)
 	{
@@ -41,9 +45,17 @@ const tTestTab vTestTab = {
 	{"tHelloWorld",
 	 []()
 	 {
-		 std::cout << "HelloWorld" << std::endl;
+		 fmt::println("HelloWorld");
 		 return EXIT_SUCCESS;
 	 }},
-};//vTestTab
+	{"tFileSystem",
+	 []()
+	 {
+		 auto vFilePath = boost::filesystem::current_path();
+		 vFilePath			= boost::filesystem::relative(vFilePath);
+		 fmt::println("FilePath=={}", vFilePath.c_str());
+		 return EXIT_SUCCESS;
+	 }},
+};		//vTestTab
 #endif//ifd(dGofDeMin_MakeTest)
 #endif//dGofDeMin_Main_cpp
