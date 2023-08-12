@@ -25,27 +25,32 @@ auto fMain(int vArgC, const char **vArgV, const char **vEnvi)
 		return EXIT_FAILURE;
 	}
 	::GLFWwindow *vWindowHandle;
-  vWindowHandle = ::glfwCreateWindow(0x200, 0x400, dGofDeMin_ProjName, NULL, NULL);
+	vWindowHandle = ::
+		glfwCreateWindow(0x200, 0x400, dGofDeMin_ProjName, NULL, NULL);
 	::glfwMakeContextCurrent(vWindowHandle);
 
 	while(::glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
 	{
-    ::glClearColor(0.0, 0.0, 0.0, 0.0);
-    ::glClear(GL_COLOR_BUFFER_BIT);
+		::glClearColor(0.0, 0.0, 0.0, 0.0);
+		::glClear(GL_COLOR_BUFFER_BIT);
 
-    ::glBegin(GL_QUADS);
-    ::glColor3ub(0xff, 0xff, 0xff);
-    ::glVertex2f(-0.5f, -0.5f);
-    ::glVertex2f(+0.5f, -0.5f);
-    ::glVertex2f(+0.5f, +0.5f);
-    ::glVertex2f(-0.5f, +0.5f);
-    ::glEnd();
+		::glBegin(GL_QUADS);
+		::glColor3ub(0xff, 0xff, 0xff);
+		::glVertex2f(-0.5f, -0.5f);
+		::glVertex2f(+0.5f, -0.5f);
+		::glVertex2f(+0.5f, +0.5f);
+		::glVertex2f(-0.5f, +0.5f);
+		::glEnd();
 
-    ::glfwSwapBuffers(vWindowHandle);
-    ::glfwPollEvents();
+		::glfwSwapBuffers(vWindowHandle);
+		::glfwPollEvents();
+		if(::glfwGetKey(vWindowHandle, GLFW_KEY_Q) == GLFW_PRESS)
+		{
+			::glfwSetWindowShouldClose(vWindowHandle, GLFW_TRUE);
+		}
 	}//loop
 
-  ::glfwTerminate();
+	::glfwTerminate();
 
 	return EXIT_SUCCESS;
 }//fMain
@@ -95,6 +100,34 @@ const tTestTab vTestTab = {
 		 auto vFilePath = boost::filesystem::current_path();
 		 vFilePath			= boost::filesystem::relative(vFilePath);
 		 fmt::println("FilePath=={}", vFilePath.c_str());
+		 return EXIT_SUCCESS;
+	 }},
+	{"tGlfwWindow",
+	 []()
+	 {
+		 if(::glfwInit() == GLFW_TRUE)
+		 {
+		 }
+		 else
+		 {
+			 return EXIT_FAILURE;
+		 }
+		 ::GLFWwindow *vWindowHandle;
+		 vWindowHandle = ::
+			 glfwCreateWindow(0x100, 0x100, dGofDeMin_ProjName, NULL, NULL);
+		 ::glfwMakeContextCurrent(vWindowHandle);
+
+		 while(::glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
+		 {
+			 ::glfwSwapBuffers(vWindowHandle);
+			 ::glfwPollEvents();
+			 if(::glfwGetKey(vWindowHandle, GLFW_KEY_Q) == GLFW_PRESS)
+			 {
+				 ::glfwSetWindowShouldClose(vWindowHandle, GLFW_TRUE);
+			 }
+		 }//loop
+
+		 ::glfwTerminate();
 		 return EXIT_SUCCESS;
 	 }},
 };		//vTestTab

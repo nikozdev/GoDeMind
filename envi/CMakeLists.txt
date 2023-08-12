@@ -115,20 +115,19 @@ if(oMakeTest)
   enable_testing()
 
   set(vTestName "tHelloWorld")
-  add_test(NAME ${vTestName}
-    COMMAND ${vProjNameTexe} ${vTestName}
-    ) # add_test
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
   set_tests_properties(${vTestName} PROPERTIES
     PASS_REGULAR_EXPRESSION "HelloWorld"
     ) # set_tests_properties
 
   set(vTestName "tFileSystem")
-  add_test(NAME ${vTestName}
-    COMMAND ${vProjNameTexe} ${vTestName}
-    ) # add_test
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
   set_tests_properties(${vTestName} PROPERTIES
     PASS_REGULAR_EXPRESSION "FilePath==."
     ) # set_tests_properties
+
+  set(vTestName "tGlfwWindow")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
 
 else()
 
