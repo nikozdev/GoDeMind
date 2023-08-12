@@ -68,6 +68,10 @@ find_package(OpenGL 4.6.0 REQUIRED)
 target_link_libraries(${vProjNameTlib} INTERFACE OpenGL)
 mark_as_advanced(FORCE OpenGL_DIR)
 
+find_package(EnTT 3.12.0 REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE EnTT::EnTT)
+mark_as_advanced(FORCE EnTT_DIR)
+
 ##dll
 
 option(oMakeTdll "Make Target: dynamically linked library" OFF)
@@ -127,6 +131,9 @@ if(oMakeTest)
     ) # set_tests_properties
 
   set(vTestName "tGlfwWindow")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
+
+  set(vTestName "tEnttSystem")
   add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
 
 else()

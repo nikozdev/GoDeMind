@@ -11,12 +11,17 @@
 #include <GLFW/glfw3.h>
 //-//graphics
 #include <GL/gl.h>
+//-//logic
+#include <entt/entity/registry.hpp>
 //content
 namespace nGofDeMin
 {
+//typedef
 //actions
 auto fMain(int vArgC, const char **vArgV, const char **vEnvi)
 {
+	entt::registry vEcs;
+
 	if(::glfwInit() == GLFW_TRUE)
 	{
 	}
@@ -100,6 +105,24 @@ const tTestTab vTestTab = {
 		 auto vFilePath = boost::filesystem::current_path();
 		 vFilePath			= boost::filesystem::relative(vFilePath);
 		 fmt::println("FilePath=={}", vFilePath.c_str());
+		 return EXIT_SUCCESS;
+	 }},
+	{"tEnttSystem",
+	 []()
+	 {
+		 entt::registry vEcs;
+
+		 auto vEnt = vEcs.create();
+
+		 typedef struct
+		 {
+			 int v;
+		 } tCom;
+
+		 auto &vCom = vEcs.emplace<tCom>(vEnt);
+
+		 fmt::println("vCom.v={}", vCom.v);
+
 		 return EXIT_SUCCESS;
 	 }},
 	{"tGlfwWindow",
