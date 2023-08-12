@@ -60,6 +60,14 @@ find_package(Boost COMPONENTS filesystem REQUIRED)
 target_link_libraries(${vProjNameTlib} INTERFACE Boost::filesystem)
 mark_as_advanced(FORCE Boost_FILESYSTEM_LIBRARY_RELEASE)
 
+find_package(glfw3 3.3.8 REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE glfw)
+mark_as_advanced(FORCE glfw_DIR)
+
+find_package(OpenGL 4.6.0 REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE OpenGL)
+mark_as_advanced(FORCE OpenGL_DIR)
+
 ##dll
 
 option(oMakeTdll "Make Target: dynamically linked library" OFF)

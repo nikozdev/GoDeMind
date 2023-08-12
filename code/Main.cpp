@@ -7,9 +7,48 @@
 //-//files:
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
+//-//system
+#include <GLFW/glfw3.h>
+//-//graphics
+#include <GL/gl.h>
 //content
 namespace nGofDeMin
 {
+//actions
+auto fMain(int vArgC, const char **vArgV, const char **vEnvi)
+{
+	if(::glfwInit() == GLFW_TRUE)
+	{
+	}
+	else
+	{
+		return EXIT_FAILURE;
+	}
+	::GLFWwindow *vWindowHandle;
+  vWindowHandle = ::glfwCreateWindow(0x200, 0x400, dGofDeMin_ProjName, NULL, NULL);
+	::glfwMakeContextCurrent(vWindowHandle);
+
+	while(::glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
+	{
+    ::glClearColor(0.0, 0.0, 0.0, 0.0);
+    ::glClear(GL_COLOR_BUFFER_BIT);
+
+    ::glBegin(GL_QUADS);
+    ::glColor3ub(0xff, 0xff, 0xff);
+    ::glVertex2f(-0.5f, -0.5f);
+    ::glVertex2f(+0.5f, -0.5f);
+    ::glVertex2f(+0.5f, +0.5f);
+    ::glVertex2f(-0.5f, +0.5f);
+    ::glEnd();
+
+    ::glfwSwapBuffers(vWindowHandle);
+    ::glfwPollEvents();
+	}//loop
+
+  ::glfwTerminate();
+
+	return EXIT_SUCCESS;
+}//fMain
 }//namespace nGofDeMin
 #if defined(dGofDeMin_MakeTexe)
 //headers
@@ -24,9 +63,10 @@ using tTestTab = std::unordered_map<tTestKey, tTestCmd>;
 extern const tTestTab vTestTab;
 #endif//ifd(dGofDeMin_MakeTest)
 //actions
-int main(int vArgC, const char **vArgV, const char **vEnvi)
+auto main(int vArgC, const char **vArgV, const char **vEnvi) -> int
 {
 	boost::filesystem::current_path(dGofDeMin_FilePathBase);
+
 #if defined(dGofDeMin_MakeTest)
 	if(vArgC > 1)
 	{
@@ -37,7 +77,8 @@ int main(int vArgC, const char **vArgV, const char **vEnvi)
 		}
 	}
 #endif//ifd(dGofDeMin_MakeTest)
-	return EXIT_SUCCESS;
+
+	return nGofDeMin::fMain(vArgC, vArgV, vEnvi);
 }//main
 #endif//ifd(dGofDeMin_MakeTexe)
 #if defined(dGofDeMin_MakeTest)
