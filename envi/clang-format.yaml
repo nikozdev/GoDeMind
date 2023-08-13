@@ -121,7 +121,7 @@ PenaltyExcessCharacter:               1024
 PenaltyIndentedWhitespace:            1024
 PenaltyReturnTypeOnItsOwnLine:        1024
 QualifierAlignment: Custom
-QualifierOrder: [ "inline", "static", "constexpr", "friend", "const", "type" ]
+QualifierOrder: [ "inline", "static", "constexpr", "const", "type" ]
 ReflowComments:   true  # obey ColumnLimit
 RemoveBracesLLVM: false # remove {} for "if", "while", "for" { oneliners }
 #RemoveSemicolon:  false # remove ; after }

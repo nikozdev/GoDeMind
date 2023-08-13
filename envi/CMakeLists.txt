@@ -4,7 +4,7 @@ include(CMakeDependentOption)
 
 # proj
 
-set(vProjNameBase "GofDeMin")
+set(vProjNameBase "GoDeMind")
 set(vProjNameTlib "t${vProjNameBase}Lib")
 set(vProjNameTdll "t${vProjNameBase}Dll")
 set(vProjNameTsll "t${vProjNameBase}Sll")
@@ -38,12 +38,49 @@ set(vFilePathMake "${vFilePathBase}/make")
 # make
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Project Build Configuration" FORCE)
-set(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Project Build Configuration" FORCE)
+  set(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
+endif(NOT CMAKE_BUILD_TYPE)
 
 ##lib
 
 add_library(${vProjNameTlib} INTERFACE)
+target_compile_definitions(${vProjNameTlib} INTERFACE
+  ${vProjNameDefs}ProjName="${vProjNameBase}"
+  ${vProjNameDefs}ProjVnum="${vProjVnumWhole}"
+  ${vProjNameDefs}FilePathBase="${vFilePathBase}"
+  ${vProjNameDefs}FilePathData="${vFilePathData}"
+  ) # target_compile_definitions
+
+find_package(fmt 10.0.0 REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE fmt::fmt)
+mark_as_advanced(FORCE fmt_DIR)
+
+mark_as_advanced(FORCE Boost_INCLUDE_DIR)
+find_package(Boost COMPONENTS filesystem REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE Boost::filesystem)
+mark_as_advanced(FORCE Boost_FILESYSTEM_LIBRARY_RELEASE)
+
+find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE ImageMagick::Magick++)
+mark_as_advanced(FORCE ImageMagick_EXECUTABLE_DIR)
+mark_as_advanced(FORCE ImageMagick_Magick++_ARCH_INCLUDE_DIR)
+mark_as_advanced(FORCE ImageMagick_Magick++_INCLUDE_DIR)
+mark_as_advanced(FORCE ImageMagick_Magick++_LIBRARY)
+
+find_package(glfw3 3.3.8 REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE glfw)
+mark_as_advanced(FORCE glfw3_DIR)
+
+find_package(OpenGL 4.6.0 REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE OpenGL::OpenGL)
+mark_as_advanced(FORCE OpenGL_DIR)
+
+find_package(LLGL REQUIRED) # initial version is 3.7
+target_link_libraries(${vProjNameTlib} INTERFACE LLGL::LLGL_OpenGL)
+mark_as_advanced(FORCE LLGL_DIR)
 
 ##dll
 
@@ -83,8 +120,41 @@ endif(oMakeTexe)
 cmake_dependent_option(oMakeTest "Make Testing" ON oMakeTexe OFF)
 if(oMakeTest)
 
+  #set(BUILD_TESTING ON FORCE)
+
+  target_compile_definitions(${vProjNameTexe} PRIVATE ${vProjNameDefs}MakeTest)
+
   include(CTest)
 
   enable_testing()
 
+  set(vTestName "tHelloWorld")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
+  set_tests_properties(${vTestName} PROPERTIES
+    PASS_REGULAR_EXPRESSION "HelloWorld"
+    ) # set_tests_properties
+
+  set(vTestName "tFileSystem")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
+  set_tests_properties(${vTestName} PROPERTIES
+    PASS_REGULAR_EXPRESSION "FilePath=."
+    ) # set_tests_properties
+
+  set(vTestName "tGlfwWindow")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
+
+  set(vTestName "tLlglWindow")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
+
+  set(vTestName "tEnttSystem")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
+
+  set(vTestName "tFileRWImage")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
+
+else()
+
+  #set(BUILD_TESTING OFF FORCE)
+
 endif(oMakeTest)
+mark_as_advanced(FORCE BUILD_TESTING)
