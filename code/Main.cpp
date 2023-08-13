@@ -1,5 +1,5 @@
-#ifndef dGofDeMin_Main_cpp
-#define dGofDeMin_Main_cpp
+#ifndef dGoDeMind_Main_cpp
+#define dGoDeMind_Main_cpp
 //headers
 #include <cstddef>
 #include <cstdlib>
@@ -33,7 +33,7 @@
 #define fActIfNot(vBool, vAct) fActIf(vBool, {}, vAct)
 #define fActIfYes(vBool, vAct) fActIf(vBool, vAct, {})
 //content
-namespace nGofDeMin
+namespace nGoDeMind
 {
 //typedef
 //actions
@@ -50,7 +50,7 @@ auto fMain(int vArgC, const char **vArgV, const char **vEnvi)
 	}
 	GLFWwindow *vWindowHandle;
 	vWindowHandle = ::
-		glfwCreateWindow(0x200, 0x400, dGofDeMin_ProjName, nullptr, nullptr);
+		glfwCreateWindow(0x200, 0x400, dGoDeMind_ProjName, nullptr, nullptr);
 	glfwMakeContextCurrent(vWindowHandle);
 
 	while(glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
@@ -78,8 +78,8 @@ auto fMain(int vArgC, const char **vArgV, const char **vEnvi)
 
 	return EXIT_SUCCESS;
 }//fMain
-}//namespace nGofDeMin
-#if defined(dGofDeMin_MakeTexe)
+}//namespace nGoDeMind
+#if defined(dGoDeMind_MakeTexe)
 //headers
 #include <unordered_map>
 #include <functional>
@@ -88,15 +88,15 @@ using tTestKey = std::string_view;
 using tTestCmd = std::function<int(void)>;
 using tTestTab = std::unordered_map<tTestKey, tTestCmd>;
 //forward
-#if defined(dGofDeMin_MakeTest)
+#if defined(dGoDeMind_MakeTest)
 extern const tTestTab vTestTab;
-#endif//ifd(dGofDeMin_MakeTest)
+#endif//ifd(dGoDeMind_MakeTest)
 //actions
 auto main(int vArgC, const char **vArgV, const char **vEnvi) -> int
 {
-	boost::filesystem::current_path(dGofDeMin_FilePathBase);
+	boost::filesystem::current_path(dGoDeMind_FilePathBase);
 
-#if defined(dGofDeMin_MakeTest)
+#if defined(dGoDeMind_MakeTest)
 	if(vArgC > 1)
 	{
 		auto vTestRef = vTestTab.find(vArgV[1]);
@@ -105,12 +105,12 @@ auto main(int vArgC, const char **vArgV, const char **vEnvi) -> int
 			return vTestRef->second();
 		}
 	}
-#endif//ifd(dGofDeMin_MakeTest)
+#endif//ifd(dGoDeMind_MakeTest)
 
-	return nGofDeMin::fMain(vArgC, vArgV, vEnvi);
+	return nGoDeMind::fMain(vArgC, vArgV, vEnvi);
 }//main
-#endif//ifd(dGofDeMin_MakeTexe)
-#if defined(dGofDeMin_MakeTest)
+#endif//ifd(dGoDeMind_MakeTexe)
+#if defined(dGoDeMind_MakeTest)
 const tTestTab vTestTab = {
 	{"tHelloWorld",
 	 []()
@@ -160,7 +160,7 @@ const tTestTab vTestTab = {
 		 }
 		 GLFWwindow *vWindowHandle;
 		 vWindowHandle = ::
-			 glfwCreateWindow(0x100, 0x100, dGofDeMin_ProjName, nullptr, nullptr);
+			 glfwCreateWindow(0x100, 0x100, dGoDeMind_ProjName, nullptr, nullptr);
 		 glfwMakeContextCurrent(vWindowHandle);
 
 		 while(glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
@@ -186,7 +186,7 @@ const tTestTab vTestTab = {
 		 });
 
 		 auto &vWindow = LLGL::CastTo<LLGL::Window>(vSwapChain->GetSurface());
-		 vWindow.SetTitle(dGofDeMin_ProjName dGofDeMin_ProjVnum);
+		 vWindow.SetTitle(dGoDeMind_ProjName dGoDeMind_ProjVnum);
 		 vWindow.Show();
 
 		 char vChar = '\0';
@@ -205,12 +205,12 @@ const tTestTab vTestTab = {
 		 try
 		 {
 			 auto vFileName = boost::filesystem::path("/TmetaNlogoR16x16y.png");
-			 auto vFilePath = boost::filesystem::path(dGofDeMin_FilePathData "/gfix");
+			 auto vFilePath = boost::filesystem::path(dGoDeMind_FilePathData "/gfix");
 			 vFilePath /= vFileName;
 			 auto vFileData = Magick::Image();
 			 vFileData.read(vFilePath.c_str());
 			 auto vTempName = boost::filesystem::unique_path();
-			 auto vTempPath = boost::filesystem::path(dGofDeMin_FilePathData "/test");
+			 auto vTempPath = boost::filesystem::path(dGoDeMind_FilePathData "/test");
 			 vTempPath /= vTempName.replace_extension(".png");
 			 fActIfYes(
 				 boost::filesystem::exists(vTempPath),
@@ -235,5 +235,5 @@ const tTestTab vTestTab = {
 		 return EXIT_SUCCESS;
 	 }},
 };		//vTestTab
-#endif//ifd(dGofDeMin_MakeTest)
-#endif//dGofDeMin_Main_cpp
+#endif//ifd(dGoDeMind_MakeTest)
+#endif//dGoDeMind_Main_cpp

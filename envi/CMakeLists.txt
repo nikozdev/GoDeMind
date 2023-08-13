@@ -4,7 +4,7 @@ include(CMakeDependentOption)
 
 # proj
 
-set(vProjNameBase "GofDeMin")
+set(vProjNameBase "GoDeMind")
 set(vProjNameTlib "t${vProjNameBase}Lib")
 set(vProjNameTdll "t${vProjNameBase}Dll")
 set(vProjNameTsll "t${vProjNameBase}Sll")
@@ -141,6 +141,9 @@ if(oMakeTest)
     ) # set_tests_properties
 
   set(vTestName "tGlfwWindow")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
+
+  set(vTestName "tLlglWindow")
   add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
 
   set(vTestName "tEnttSystem")
