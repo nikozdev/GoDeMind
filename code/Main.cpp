@@ -11,8 +11,23 @@
 #include <GLFW/glfw3.h>
 //-//graphics
 #include <GL/gl.h>
+#include <Magick++.h>
 //-//logic
 #include <entt/entity/registry.hpp>
+//defines
+#define fActIf(vBool, vActForTruth, vActForFalse) \
+	({                                              \
+		if(vBool)                                     \
+		{                                             \
+			vActForTruth;                               \
+		}                                             \
+		else                                          \
+		{                                             \
+			vActForFalse;                               \
+		}                                             \
+	})
+#define fActIfNot(vBool, vAct) fActIf(vBool, {}, vAct)
+#define fActIfYes(vBool, vAct) fActIf(vBool, vAct, {})
 //content
 namespace nGofDeMin
 {
@@ -22,19 +37,19 @@ auto fMain(int vArgC, const char **vArgV, const char **vEnvi)
 {
 	entt::registry vEcs;
 
-	if(::glfwInit() == GLFW_TRUE)
+	if(glfwInit() == GLFW_TRUE)
 	{
 	}
 	else
 	{
 		return EXIT_FAILURE;
 	}
-	::GLFWwindow *vWindowHandle;
+	GLFWwindow *vWindowHandle;
 	vWindowHandle = ::
 		glfwCreateWindow(0x200, 0x400, dGofDeMin_ProjName, NULL, NULL);
-	::glfwMakeContextCurrent(vWindowHandle);
+	glfwMakeContextCurrent(vWindowHandle);
 
-	while(::glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
+	while(glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
 	{
 		::glClearColor(0.0, 0.0, 0.0, 0.0);
 		::glClear(GL_COLOR_BUFFER_BIT);
@@ -47,15 +62,15 @@ auto fMain(int vArgC, const char **vArgV, const char **vEnvi)
 		::glVertex2f(-0.5f, +0.5f);
 		::glEnd();
 
-		::glfwSwapBuffers(vWindowHandle);
-		::glfwPollEvents();
-		if(::glfwGetKey(vWindowHandle, GLFW_KEY_Q) == GLFW_PRESS)
+		glfwSwapBuffers(vWindowHandle);
+		glfwPollEvents();
+		if(glfwGetKey(vWindowHandle, GLFW_KEY_Q) == GLFW_PRESS)
 		{
-			::glfwSetWindowShouldClose(vWindowHandle, GLFW_TRUE);
+			glfwSetWindowShouldClose(vWindowHandle, GLFW_TRUE);
 		}
 	}//loop
 
-	::glfwTerminate();
+	glfwTerminate();
 
 	return EXIT_SUCCESS;
 }//fMain
@@ -104,7 +119,11 @@ const tTestTab vTestTab = {
 	 {
 		 auto vFilePath = boost::filesystem::current_path();
 		 vFilePath			= boost::filesystem::relative(vFilePath);
-		 fmt::println("FilePath=={}", vFilePath.c_str());
+		 fmt::println(stdout, "FilePath={}", vFilePath.c_str());
+
+		 auto vTempPath = boost::filesystem::unique_path();
+		 fmt::println(stdout, "TempPath={}", vTempPath.c_str());
+
 		 return EXIT_SUCCESS;
 	 }},
 	{"tEnttSystem",
@@ -128,29 +147,65 @@ const tTestTab vTestTab = {
 	{"tGlfwWindow",
 	 []()
 	 {
-		 if(::glfwInit() == GLFW_TRUE)
+		 if(glfwInit() == GLFW_TRUE)
 		 {
 		 }
 		 else
 		 {
 			 return EXIT_FAILURE;
 		 }
-		 ::GLFWwindow *vWindowHandle;
+		 GLFWwindow *vWindowHandle;
 		 vWindowHandle = ::
 			 glfwCreateWindow(0x100, 0x100, dGofDeMin_ProjName, NULL, NULL);
-		 ::glfwMakeContextCurrent(vWindowHandle);
+		 glfwMakeContextCurrent(vWindowHandle);
 
-		 while(::glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
+		 while(glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
 		 {
-			 ::glfwSwapBuffers(vWindowHandle);
-			 ::glfwPollEvents();
-			 if(::glfwGetKey(vWindowHandle, GLFW_KEY_Q) == GLFW_PRESS)
+			 glfwSwapBuffers(vWindowHandle);
+			 glfwPollEvents();
+			 if(glfwGetKey(vWindowHandle, GLFW_KEY_Q) == GLFW_PRESS)
 			 {
-				 ::glfwSetWindowShouldClose(vWindowHandle, GLFW_TRUE);
+				 glfwSetWindowShouldClose(vWindowHandle, GLFW_TRUE);
 			 }
 		 }//loop
 
-		 ::glfwTerminate();
+		 glfwTerminate();
+		 return EXIT_SUCCESS;
+	 }},
+	{"tFileRWImage",
+	 []()
+	 {
+		 Magick::InitializeMagick(NULL);
+		 try
+		 {
+			 auto vFileName = boost::filesystem::path("/TmetaNlogoR16x16y.png");
+			 auto vFilePath = boost::filesystem::path(dGofDeMin_FilePathData "/gfix");
+			 vFilePath /= vFileName;
+			 auto vFileData = Magick::Image();
+			 vFileData.read(vFilePath.c_str());
+			 auto vTempName = boost::filesystem::unique_path();
+			 auto vTempPath = boost::filesystem::path(dGofDeMin_FilePathData "/test");
+			 vTempPath /= vTempName.replace_extension(".png");
+			 fActIfYes(
+				 boost::filesystem::exists(vTempPath),
+				 throw std::runtime_error("temporary path is taken")
+			 );
+			 vFileData.write(vTempPath.c_str());
+			 fActIfNot(
+				 boost::filesystem::exists(vTempPath),
+         throw std::runtime_error("temporary file was not created")
+			 );
+       boost::filesystem::remove(vTempPath);
+			 fActIfYes(
+				 boost::filesystem::exists(vTempPath),
+         throw std::runtime_error("temporary file was not deleted")
+			 );
+		 }
+		 catch(Magick::Exception &vError)
+		 {
+			 fmt::println(stderr, "[error]=({})", vError.what());
+       return EXIT_FAILURE;
+		 }
 		 return EXIT_SUCCESS;
 	 }},
 };		//vTestTab

@@ -38,8 +38,11 @@ set(vFilePathMake "${vFilePathBase}/make")
 # make
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Project Build Configuration" FORCE)
-set(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Project Build Configuration" FORCE)
+  set(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${CMAKE_CONFIGURATION_TYPES})
+endif(NOT CMAKE_BUILD_TYPE)
 
 ##lib
 
@@ -60,12 +63,19 @@ find_package(Boost COMPONENTS filesystem REQUIRED)
 target_link_libraries(${vProjNameTlib} INTERFACE Boost::filesystem)
 mark_as_advanced(FORCE Boost_FILESYSTEM_LIBRARY_RELEASE)
 
+find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
+target_link_libraries(${vProjNameTlib} INTERFACE ImageMagick::Magick++)
+mark_as_advanced(FORCE ImageMagick_EXECUTABLE_DIR)
+mark_as_advanced(FORCE ImageMagick_Magick++_ARCH_INCLUDE_DIR)
+mark_as_advanced(FORCE ImageMagick_Magick++_INCLUDE_DIR)
+mark_as_advanced(FORCE ImageMagick_Magick++_LIBRARY)
+
 find_package(glfw3 3.3.8 REQUIRED)
 target_link_libraries(${vProjNameTlib} INTERFACE glfw)
-mark_as_advanced(FORCE glfw_DIR)
+mark_as_advanced(FORCE glfw3_DIR)
 
 find_package(OpenGL 4.6.0 REQUIRED)
-target_link_libraries(${vProjNameTlib} INTERFACE OpenGL)
+target_link_libraries(${vProjNameTlib} INTERFACE OpenGL::OpenGL)
 mark_as_advanced(FORCE OpenGL_DIR)
 
 find_package(EnTT 3.12.0 REQUIRED)
@@ -127,13 +137,16 @@ if(oMakeTest)
   set(vTestName "tFileSystem")
   add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
   set_tests_properties(${vTestName} PROPERTIES
-    PASS_REGULAR_EXPRESSION "FilePath==."
+    PASS_REGULAR_EXPRESSION "FilePath=."
     ) # set_tests_properties
 
   set(vTestName "tGlfwWindow")
   add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
 
   set(vTestName "tEnttSystem")
+  add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
+
+  set(vTestName "tFileRWImage")
   add_test(NAME ${vTestName} COMMAND ${vProjNameTexe} ${vTestName})
 
 else()
