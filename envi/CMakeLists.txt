@@ -78,9 +78,9 @@ find_package(OpenGL 4.6.0 REQUIRED)
 target_link_libraries(${vProjNameTlib} INTERFACE OpenGL::OpenGL)
 mark_as_advanced(FORCE OpenGL_DIR)
 
-find_package(EnTT 3.12.0 REQUIRED)
-target_link_libraries(${vProjNameTlib} INTERFACE EnTT::EnTT)
-mark_as_advanced(FORCE EnTT_DIR)
+find_package(LLGL REQUIRED) # initial version is 3.7
+target_link_libraries(${vProjNameTlib} INTERFACE LLGL::LLGL_OpenGL)
+mark_as_advanced(FORCE LLGL_DIR)
 
 ##dll
 

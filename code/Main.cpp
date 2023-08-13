@@ -1,6 +1,9 @@
 #ifndef dGofDeMin_Main_cpp
 #define dGofDeMin_Main_cpp
 //headers
+#include <cstddef>
+#include <cstdlib>
+#include <iostream>
 //-//string
 #include <fmt/format.h>
 #include <string_view>
@@ -10,6 +13,7 @@
 //-//system
 #include <GLFW/glfw3.h>
 //-//graphics
+#include <LLGL/LLGL.h>
 #include <GL/gl.h>
 #include <Magick++.h>
 //-//logic
@@ -46,7 +50,7 @@ auto fMain(int vArgC, const char **vArgV, const char **vEnvi)
 	}
 	GLFWwindow *vWindowHandle;
 	vWindowHandle = ::
-		glfwCreateWindow(0x200, 0x400, dGofDeMin_ProjName, NULL, NULL);
+		glfwCreateWindow(0x200, 0x400, dGofDeMin_ProjName, nullptr, nullptr);
 	glfwMakeContextCurrent(vWindowHandle);
 
 	while(glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
@@ -156,7 +160,7 @@ const tTestTab vTestTab = {
 		 }
 		 GLFWwindow *vWindowHandle;
 		 vWindowHandle = ::
-			 glfwCreateWindow(0x100, 0x100, dGofDeMin_ProjName, NULL, NULL);
+			 glfwCreateWindow(0x100, 0x100, dGofDeMin_ProjName, nullptr, nullptr);
 		 glfwMakeContextCurrent(vWindowHandle);
 
 		 while(glfwWindowShouldClose(vWindowHandle) == GLFW_FALSE)
@@ -172,10 +176,32 @@ const tTestTab vTestTab = {
 		 glfwTerminate();
 		 return EXIT_SUCCESS;
 	 }},
+	{"tLlglWindow",
+	 []()
+	 {
+		 auto vRenderSystem = LLGL::RenderSystem::Load("OpenGL", nullptr);
+
+		 auto vSwapChain = vRenderSystem->CreateSwapChain(LLGL::SwapChainDescriptor{
+			 .resolution = {						0x100,							 0x100,},
+		 });
+
+		 auto &vWindow = LLGL::CastTo<LLGL::Window>(vSwapChain->GetSurface());
+		 vWindow.SetTitle(dGofDeMin_ProjName dGofDeMin_ProjVnum);
+		 vWindow.Show();
+
+		 char vChar = '\0';
+		 do
+		 {
+			 vSwapChain->Present();
+		 }
+		 while(std::cin >> vChar, vChar != 'q');
+
+		 return EXIT_SUCCESS;
+	 }},
 	{"tFileRWImage",
 	 []()
 	 {
-		 Magick::InitializeMagick(NULL);
+		 Magick::InitializeMagick(nullptr);
 		 try
 		 {
 			 auto vFileName = boost::filesystem::path("/TmetaNlogoR16x16y.png");
@@ -193,18 +219,18 @@ const tTestTab vTestTab = {
 			 vFileData.write(vTempPath.c_str());
 			 fActIfNot(
 				 boost::filesystem::exists(vTempPath),
-         throw std::runtime_error("temporary file was not created")
+				 throw std::runtime_error("temporary file was not created")
 			 );
-       boost::filesystem::remove(vTempPath);
+			 boost::filesystem::remove(vTempPath);
 			 fActIfYes(
 				 boost::filesystem::exists(vTempPath),
-         throw std::runtime_error("temporary file was not deleted")
+				 throw std::runtime_error("temporary file was not deleted")
 			 );
 		 }
 		 catch(Magick::Exception &vError)
 		 {
 			 fmt::println(stderr, "[error]=({})", vError.what());
-       return EXIT_FAILURE;
+			 return EXIT_FAILURE;
 		 }
 		 return EXIT_SUCCESS;
 	 }},
