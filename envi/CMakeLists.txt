@@ -13,7 +13,7 @@ set(vProjNameTest "t${vProjNameBase}Try")
 set(vProjNameDefs "d${vProjNameBase}_")
 
 set(vProjVnumMajor 0)
-set(vProjVnumMinor 0)
+set(vProjVnumMinor 1)
 set(vProjVnumMicro 0)
 set(vProjVnumWhole "${vProjVnumMajor}.${vProjVnumMinor}.${vProjVnumMicro}")
 
